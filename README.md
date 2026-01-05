@@ -17,4 +17,3 @@ Personal learning repository for data engineering and cloud-native technologies.
 ---
 
 **Started:** January 2026
-# engineering-learning-journal
