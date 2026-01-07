@@ -1,0 +1,78 @@
+server health DDL and dummy data 
+
+CREATE TABLE server_health (
+    log_id SERIAL PRIMARY KEY,
+    server_id INTEGER NOT NULL,
+    log_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    status VARCHAR(20) NOT NULL, -- 'healthy', 'unstable', 'down', 'maintenance'
+    cpu_usage INTEGER,            -- Can be NULL if server is 'down' or 'maintenance'
+    notes TEXT
+);
+
+INSERT INTO server_health (server_id, log_date, status, cpu_usage, notes) VALUES
+-- Scenario A/C: Server 1 (4-Day Healthy Island & Gaps)
+(1, '2025-01-01 10:00:00', 'healthy', 45, 'Scenario A: Short Healthy Run'),
+(1, '2025-01-02 10:00:00', 'healthy', 52, NULL),
+(1, '2025-01-03 10:00:00', 'down', NULL, 'Server is completely down, CPU is NULL'), 
+(1, '2025-01-04 10:00:00', 'healthy', 38, 'Start of 4-day healthy island'),
+(1, '2025-01-05 10:00:00', 'healthy', 41, NULL),
+(1, '2025-01-06 10:00:00', 'healthy', 55, NULL),
+(1, '2025-01-07 10:00:00', 'healthy', 60, 'End of 4-day island'),
+(1, '2025-01-08 10:00:00', 'maintenance', NULL, 'Scheduled maintenance, CPU is NULL'), 
+(1, '2025-01-09 10:00:00', 'healthy', 48, 'Post-maintenance check'),
+
+-- Scenario B: Servers 2, 3, 4 (Simultaneous Instability - Problem 4)
+
+-- Time: 10:00:00 (Setup: Only 1 unstable server)
+(2, '2025-01-10 10:00:00', 'healthy', 40, NULL),
+(3, '2025-01-10 10:00:00', 'unstable', 85, 'Individual instability'),
+(4, '2025-01-10 10:00:00', 'healthy', 30, NULL),
+
+-- Start of 6-hour simultaneous instability (2+ servers unstable)
+(2, '2025-01-10 11:00:00', 'unstable', 95, 'Start of 6-hour collective event'), 
+(3, '2025-01-10 11:00:00', 'unstable', 92, NULL),
+(4, '2025-01-10 11:00:00', 'healthy', 35, NULL),
+
+(2, '2025-01-10 12:00:00', 'unstable', 90, NULL), 
+(3, '2025-01-10 12:00:00', 'unstable', 88, NULL),
+(4, '2025-01-10 12:00:00', 'down', NULL, 'Server down, CPU usage is NULL'),
+
+(2, '2025-01-10 13:00:00', 'unstable', 94, 'Count 3: All unstable'), 
+(3, '2025-01-10 13:00:00', 'unstable', 91, NULL),
+(4, '2025-01-10 13:00:00', 'unstable', 87, NULL),
+
+(2, '2025-01-10 14:00:00', 'unstable', 96, NULL), 
+(3, '2025-01-10 14:00:00', 'unstable', 93, NULL),
+(4, '2025-01-10 14:00:00', 'unstable', 89, NULL),
+
+(2, '2025-01-10 15:00:00', 'unstable', 97, NULL), 
+(3, '2025-01-10 15:00:00', 'unstable', 94, NULL),
+(4, '2025-01-10 15:00:00', 'unstable', 90, NULL),
+
+(2, '2025-01-10 16:00:00', 'unstable', 80, 'End of 6-hour collective event'), 
+(3, '2025-01-10 16:00:00', 'unstable', 82, NULL),
+(4, '2025-01-10 16:00:00', 'healthy', 41, NULL),
+
+-- Time: 17:00:00 (Collective stability restored)
+(2, '2025-01-10 17:00:00', 'healthy', 45, NULL),
+(3, '2025-01-10 17:00:00', 'healthy', 32, NULL),
+(4, '2025-01-10 17:00:00', 'healthy', 36, NULL);
+
+
+
+-----
+Problem 1: Longest Consecutive Uptime Period (The Classic)
+
+Goal: For each server, find the longest period (start date, end date, and total duration) where its status was consistently 'healthy' or 'maintenance' (treating maintenance as acceptable downtime for uptime calculation).
+
+Problem 2: Consecutive High Resource Usage (The Anomaly Hunter)
+
+Goal: Find all periods where a specific server (Server ID 2) experienced high CPU usage (cpu_usage > 90) for at least 3 consecutive hours. Return the start time, end time, and average CPU during that period.
+
+Problem 3: State Reversals (The Downtime Analysis)
+
+Goal: For Server ID 1, identify the first and last log entry for every period where the status changed to or from 'down'. (i.e., find all continuous 'down' periods and all continuous 'not-down' periods).
+
+Problem 4: Finding Collective Unstable Periods (The Original Solved Problem)
+
+Goal: Find all periods where two or more distinct servers were simultaneously reporting an 'unstable' status for at least 6 hours.
