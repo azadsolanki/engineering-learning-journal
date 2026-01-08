@@ -1,0 +1,6 @@
+customer_id,customer_name,total_spend,days_since_first_order
+101,John Doe,550,310
+101,John Doe,550,360
+102,Jane Smith,180,324
+103,Emily Davis,70,322
+104,Michael Brown,120,299
