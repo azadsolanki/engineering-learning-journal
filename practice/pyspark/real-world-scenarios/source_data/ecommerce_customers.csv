@@ -1,0 +1,13 @@
+customer_id,name,email,country,signup_date,status
+1,John Smith,john.smith@email.com,USA,2024-01-15,active
+2,Maria Garcia,maria.garcia@email.com,Spain,2024-02-20,active
+3,Li Wei,li.wei@email.com,China,2024-01-10,inactive
+4,Sarah Johnson,sarah.j@email.com,USA,2024-03-05,active
+5,Ahmed Hassan,ahmed.h@email.com,Egypt,2024-02-28,active
+6,Emma Wilson,emma.w@email.com,UK,2024-01-25,active
+7,Carlos Rodriguez,carlos.r@email.com,Mexico,2024-03-10,inactive
+8,Yuki Tanaka,yuki.t@email.com,Japan,2024-02-15,active
+9,Anna Mueller,anna.m@email.com,Germany,2024-01-30,active
+10,Raj Patel,raj.p@email.com,India,2024-03-01,active
+11,Invalid User,,USA,2024-01-01,active
+12,Test User,test@test.com,,2024-02-01,active
