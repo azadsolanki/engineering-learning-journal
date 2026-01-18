@@ -1,0 +1,17 @@
+customer_id,name,email,country,signup_date,customer_status,order_id,product_name,quantity,price,order_date,order_status,total_amount,order_month,is_high_value,days_since_signup
+1,John Smith,john.smith@email.com,USA,2024-01-15,active,1014,USB Cable,10,12.99,2024-03-28,completed,129.90,2024-03,Medium,73
+1,John Smith,john.smith@email.com,USA,2024-01-15,active,1003,Keyboard,1,79.99,2024-03-17,completed,79.99,2024-03,Low,62
+1,John Smith,john.smith@email.com,USA,2024-01-15,active,1001,Laptop,1,999.99,2024-03-15,completed,999.99,2024-03,High,60
+2,Maria Garcia,maria.garcia@email.com,Spain,2024-02-20,active,1008,Webcam,1,89.99,2024-03-22,pending,89.99,2024-03,Low,31
+2,Maria Garcia,maria.garcia@email.com,Spain,2024-02-20,active,1002,Mouse,2,25.5,2024-03-16,completed,51.00,2024-03,Low,25
+3,Li Wei,li.wei@email.com,China,2024-01-10,inactive,1004,Monitor,1,299.99,2024-03-18,cancelled,299.99,2024-03,Medium,68
+4,Sarah Johnson,sarah.j@email.com,USA,2024-03-05,active,1012,Monitor,2,299.99,2024-03-26,completed,599.98,2024-03,High,21
+4,Sarah Johnson,sarah.j@email.com,USA,2024-03-05,active,1005,Laptop,1,999.99,2024-03-19,completed,999.99,2024-03,High,14
+5,Ahmed Hassan,ahmed.h@email.com,Egypt,2024-02-28,active,1006,Headphones,3,45.0,2024-03-20,completed,135.00,2024-03,Medium,21
+6,Emma Wilson,emma.w@email.com,UK,2024-01-25,active,1017,Laptop,1,999.99,2024-04-01,pending,999.99,2024-04,High,67
+6,Emma Wilson,emma.w@email.com,UK,2024-01-25,active,1007,USB Cable,5,12.99,2024-03-21,completed,64.95,2024-03,Low,56
+7,Carlos Rodriguez,carlos.r@email.com,Mexico,2024-03-10,inactive,1009,Mouse Pad,2,15.99,2024-03-23,completed,31.98,2024-03,Low,13
+8,Yuki Tanaka,yuki.t@email.com,Japan,2024-02-15,active,1018,Monitor,1,299.99,2024-04-02,completed,299.99,2024-04,Medium,47
+8,Yuki Tanaka,yuki.t@email.com,Japan,2024-02-15,active,1010,Laptop,2,999.99,2024-03-24,completed,1999.98,2024-03,High,38
+9,Anna Mueller,anna.m@email.com,Germany,2024-01-30,active,1011,Keyboard,1,79.99,2024-03-25,completed,79.99,2024-03,Low,55
+10,Raj Patel,raj.p@email.com,India,2024-03-01,active,1013,Headphones,1,45.0,2024-03-27,completed,45.00,2024-03,Low,26

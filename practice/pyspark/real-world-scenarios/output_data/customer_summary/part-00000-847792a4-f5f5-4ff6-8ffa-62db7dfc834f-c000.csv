@@ -1,0 +1,11 @@
+customer_id,name,email,country,customer_status,total_orders,total_spent,avg_order_value,completed_orders
+8,Yuki Tanaka,yuki.t@email.com,Japan,active,2,2299.97,1149.99,2
+4,Sarah Johnson,sarah.j@email.com,USA,active,2,1599.97,799.99,2
+1,John Smith,john.smith@email.com,USA,active,3,1209.88,403.29,3
+6,Emma Wilson,emma.w@email.com,UK,active,2,1064.94,532.47,1
+3,Li Wei,li.wei@email.com,China,inactive,1,299.99,299.99,0
+2,Maria Garcia,maria.garcia@email.com,Spain,active,2,140.99,70.50,1
+5,Ahmed Hassan,ahmed.h@email.com,Egypt,active,1,135.00,135.00,1
+9,Anna Mueller,anna.m@email.com,Germany,active,1,79.99,79.99,1
+10,Raj Patel,raj.p@email.com,India,active,1,45.00,45.00,1
+7,Carlos Rodriguez,carlos.r@email.com,Mexico,inactive,1,31.98,31.98,1

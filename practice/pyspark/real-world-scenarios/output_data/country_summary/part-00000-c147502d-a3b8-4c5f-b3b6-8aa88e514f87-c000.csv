@@ -1,0 +1,9 @@
+country,unique_customers,total_orders,total_revenue,avg_revenue_per_customer
+USA,5,5,2809.85,561.97
+Japan,2,2,2299.97,1149.99
+Egypt,1,1,135.00,135.00
+Germany,1,1,79.99,79.99
+UK,1,1,64.95,64.95
+Spain,1,1,51.00,51.00
+India,1,1,45.00,45.00
+Mexico,1,1,31.98,31.98
