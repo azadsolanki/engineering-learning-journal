@@ -62,6 +62,12 @@ Quick reference for all books across different topics.
 |-------|--------|--------|----------|-------|
 | The Data Warehouse Toolkit | Kimball & Ross | 📚 To Read | Medium | Dimensional modeling |
 
+## AI-ML
+
+| Title | Author | Status | Priority | Notes |
+|-------|--------|--------|----------|-------|
+| Deep Learning: Foundations and Concepts | Christopher M. Bishop, Hugh Bishop | 📚 To Read | Medium | Foundation for deep learning|
+
 ---
 
 ## General Engineering
