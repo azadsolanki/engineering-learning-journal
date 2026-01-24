@@ -39,8 +39,10 @@ Load balancing
 If multiple Pods match the Service’s selector, traffic is automatically distributed across them, providing high availability and reliability.
 
 ###  traffic flow through a multi-container Pod with multiple Services
-![Chart](images/ClusterNetworking.png)
+Kubernetes Networking Architecture Diagram
+![Chart](images/kubernetes-networking-diagram.png)
 
+The diagram above illustrates the complete traffic flow in Kubernetes networking.
 ## Pod Structure
 - **Multi-container Pod** on worker node (e.g., App + Logger sidecar)
 - **Pod IP**: Ephemeral (e.g., 192.168.2.33:31291) - changes on restart
