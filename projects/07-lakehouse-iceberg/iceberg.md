@@ -1,6 +1,6 @@
 # Apache Iceberg Notes
 
-> Personal study notes — migrating from Delta Lake to Iceberg.
+Migrating from Delta Lake to Iceberg.
 
 ---
 
@@ -43,29 +43,7 @@ The biggest practical win: **hidden partitioning** means your queries don't need
 
 ## The Three-Layer Architecture
 
-```mermaid
-flowchart TD
-    CAT[CATALOG LAYER - Hive Metastore / AWS Glue / Nessie]
-
-    subgraph METAL [METADATA LAYER - JSON files on object storage]
-        MJ[metadata.json - schema history and snapshot list]
-        SN[Snapshot - immutable, one created per write]
-        ML[Manifest List - lists all manifest files]
-        MF[Manifest File - data file paths and column stats]
-    end
-
-    subgraph DATAL [DATA LAYER - S3 / GCS / HDFS]
-        PQ[Data Files - part-0001.parquet, part-0002.parquet]
-        DF[Delete Files - positional or equality deletes]
-    end
-
-    CAT --> MJ
-    MJ --> SN
-    SN --> ML
-    ML --> MF
-    MF --> PQ
-    MF --> DF
-```
+![Three-layer architecture](diagrams/arch.png)
 
 ### Catalog layer
 
@@ -77,13 +55,7 @@ Swapping catalog backends (SQLite to Glue to Nessie) requires only a config chan
 
 The brain of Iceberg. Every write produces a new, **immutable snapshot**. The chain is:
 
-```mermaid
-flowchart LR
-    A[metadata.json] --> B[snapshots]
-    B --> C[manifest-list file]
-    C --> D[manifest files]
-    D --> E[data file paths and column stats]
-```
+![Metadata chain](diagrams/chain.png)
 
 This structure is what enables:
 - **Time travel**: old snapshots are never deleted until you explicitly expire them.
@@ -107,23 +79,7 @@ Immutable Parquet (or ORC/Avro) files. Iceberg **never modifies a data file in-p
 
 In Hive/Delta you write partition columns explicitly and queries must match them. In Iceberg you declare a transform and queries prune automatically:
 
-```mermaid
-flowchart TD
-    IN[order_ts = 2024-03-10]
-    TR[month transform applied at write time]
-
-    IN --> TR
-
-    TR --> P1[partition 2024-01 - part-0001 and part-0002]
-    TR --> P2[partition 2024-02 - part-0003]
-    TR --> P3[partition 2024-03 - part-0004 and part-0005]
-    TR --> P4[partition 2024-04 - part-0006]
-
-    P3 --> QRY[WHERE order_ts >= 2024-03-01 - skips Jan and Feb]
-    P4 --> QRY
-    P1 -.-> QRY
-    P2 -.-> QRY
-```
+![Hidden partitioning](diagrams/partition.png)
 
 ```python
 # Define once at table creation
@@ -139,19 +95,7 @@ Supported transforms: `identity`, `bucket(N)`, `truncate(N)`, `year`, `month`, `
 
 Add, drop, rename, or reorder columns without rewriting data. Each snapshot records which schema version it was written with, so old and new files coexist safely.
 
-```mermaid
-flowchart LR
-    subgraph V1 [Schema v1 - original]
-        F1[order_id, customer_id, product, quantity, total_usd, order_ts]
-    end
-
-    subgraph V2 [Schema v2 - after add_column]
-        F2[order_id, customer_id, product, quantity, total_usd, order_ts, discount_pct NEW]
-    end
-
-    V1 -->|add_column discount_pct| V2
-    OLD[Old files written with Schema v1] -->|reads discount_pct as None - no rewrite| V2
-```
+![Schema evolution](diagrams/schema.png)
 
 ```python
 with table.update_schema() as upd:
@@ -166,17 +110,7 @@ New column reads as `None` on old rows — fully backwards compatible.
 
 Every write = new snapshot. Old snapshots are never deleted until you explicitly expire them. The catalog pointer atomically swaps to the latest — that's ACID.
 
-```mermaid
-flowchart LR
-    S1[Snapshot 1 - INSERT 5 rows - Jan 2024]
-    S2[Snapshot 2 - INSERT 3 rows - Mar 2024]
-    S3[Snapshot 3 - schema evolved - CURRENT]
-    TT[Time travel - scan Snapshot 1 - returns 5 rows only]
-
-    S1 -->|parent of| S2
-    S2 -->|parent of| S3
-    S1 -.->|query past state| TT
-```
+![Snapshot timeline and time travel](diagrams/timetravel.png)
 
 Query any past state by snapshot ID or timestamp:
 
@@ -193,18 +127,7 @@ spark.sql("SELECT * FROM shop.orders TIMESTAMP AS OF '2024-01-15'")
 
 Two delete file types — no full file rewrites needed until compaction:
 
-```mermaid
-flowchart TD
-    OP[DELETE FROM orders WHERE order_id = O003]
-
-    OP --> EQ[Equality Delete File - stores column values of deleted rows]
-    OP --> POS[Positional Delete File - stores file path and row position]
-
-    EQ --> READ[Query engine merges data files and delete files at read time]
-    POS --> READ
-
-    READ --> COMPACT[OPTIMIZE rewrites files with deletes baked in]
-```
+![Row-level deletes](diagrams/deletes.png)
 
 ### Partition evolution
 
