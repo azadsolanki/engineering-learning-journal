@@ -2,7 +2,7 @@
 
 Personal learning repository for data engineering and cloud-native technologies.
 
-**Focus Areas:** Kubernetes, SQL, dbt, PySpark, GCP
+**Focus Areas:** Kubernetes, SQL, dbt, PySpark, GCP, Agents, OpenSource
 
 ---
 ## Prerequisites
