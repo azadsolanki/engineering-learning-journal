@@ -1,0 +1,28 @@
+# LangChain core
+langchain
+langchain-community
+langchain-ollama
+langchain-text-splitters
+langchain-chroma
+
+# Local tracing (Phoenix by Arize - no account needed)
+arize-phoenix
+opentelemetry-sdk
+opentelemetry-exporter-otlp
+openinference-instrumentation-langchain
+
+# Vector store
+chromadb
+
+# Document loading
+unstructured
+
+# LangGraph (Phase 2)
+langgraph
+
+# API (Phase 3)
+fastapi
+uvicorn
+
+# Utilities
+python-dotenv
