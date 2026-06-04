@@ -2,14 +2,17 @@
 Tools available to the Kubernetes troubleshooting agent.
 """
 
+import os
 import subprocess
+from pathlib import Path
 from langchain_core.tools import tool
 from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
 
-CHROMA_DIR = "../phase1-rag/chroma_db"
-OLLAMA_BASE_URL = "http://localhost:11434"
-EMBED_MODEL = "nomic-embed-text"
+_default_chroma = str(Path(__file__).parent.parent / "phase1-rag" / "chroma_db")
+CHROMA_DIR = os.getenv("CHROMA_DIR", _default_chroma)
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
+EMBED_MODEL = os.getenv("EMBED_MODEL", "nomic-embed-text")
 
 
 @tool

@@ -6,10 +6,13 @@ Learning project covering LangChain, LangSmith, and LangGraph with concrete use 
 
 ```
 langchain-poc/
-├── phase1-rag/         # RAG chatbot over fedora-engineering-workstation docs
-├── phase2-langgraph/   # Multi-step Kubernetes troubleshooting agent
-├── phase3-kubernetes/  # Deploy the agent on kind cluster
-└── docs/               # Notes and diagrams
+├── phase1-rag/              # RAG chatbot over fedora-engineering-workstation docs
+├── phase2-langgraph/        # Multi-step Kubernetes troubleshooting agent
+├── phase3-kubernetes/
+│   ├── app/main.py          # FastAPI wrapper
+│   └── manifests/           # K8s Namespace, RBAC, ConfigMap, Deployment, Service
+├── Dockerfile
+└── requirements.txt
 ```
 
 ## Setup
@@ -76,10 +79,63 @@ python rag.py --question "how do I set up ArgoCD?"
 
 ## Phase 2 — LangGraph Agent
 
-Coming soon: multi-step Kubernetes troubleshooting agent.
+**Concept:** Stateful multi-step agent using LangGraph — diagnose, fetch kubectl info, search docs, suggest a fix.
+
+### Run
+
+```bash
+cd phase2-langgraph
+python agent.py
+python agent.py --problem "pod is in CrashLoopBackOff"
+```
 
 ---
 
 ## Phase 3 — Kubernetes Deployment
 
-Coming soon: deploy the agent on kind with FastAPI.
+**Concept:** Wrap the agent in a FastAPI service and deploy it onto the cluster — the agent runs *inside* K8s and inspects itself via in-cluster kubectl access.
+
+### 1. Build the image
+
+```bash
+# From the langchain-poc/ directory
+podman build -t langchain-poc-agent:latest .
+```
+
+### 2. Load it onto the fedora node (CRI-O, no registry needed)
+
+```bash
+podman save langchain-poc-agent:latest | sudo crictl import - langchain-poc-agent:latest
+```
+
+### 3. Apply manifests
+
+```bash
+kubectl apply -f phase3-kubernetes/manifests/namespace.yaml
+kubectl apply -f phase3-kubernetes/manifests/rbac.yaml
+kubectl apply -f phase3-kubernetes/manifests/configmap.yaml
+kubectl apply -f phase3-kubernetes/manifests/deployment.yaml
+kubectl apply -f phase3-kubernetes/manifests/service.yaml
+```
+
+### 4. Call the API
+
+```bash
+# Health check
+curl http://192.168.4.73:30080/health
+
+# Diagnose a problem
+curl -X POST http://192.168.4.73:30080/diagnose \
+  -H "Content-Type: application/json" \
+  -d '{"problem": "a pod is stuck in CrashLoopBackOff"}'
+
+# Swagger UI
+open http://192.168.4.73:30080/docs
+```
+
+### What to observe
+
+- Pod uses in-cluster service account — kubectl runs as the pod's identity
+- RBAC limits it to read-only verbs (get, list, describe, logs)
+- ChromaDB is mounted from the host via hostPath — no re-ingestion needed
+- Ollama runs on the fedora host (192.168.4.73:11434), reachable from the pod over the node IP

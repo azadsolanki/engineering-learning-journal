@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: k8s-agent
+  namespace: langchain-poc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: k8s-agent
+  template:
+    metadata:
+      labels:
+        app: k8s-agent
+    spec:
+      serviceAccountName: k8s-agent
+      # Pin to fedora node so hostPath chroma_db and Ollama are reachable
+      nodeSelector:
+        kubernetes.io/hostname: fedora
+      containers:
+        - name: agent
+          image: langchain-poc-agent:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: agent-config
+          volumeMounts:
+            - name: chroma-db
+              mountPath: /chroma_db
+              readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+      volumes:
+        - name: chroma-db
+          hostPath:
+            path: /home/azad/code/apps/langchain-poc/projects/langchain-poc/phase1-rag/chroma_db
+            type: Directory

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agent-config
+  namespace: langchain-poc
+data:
+  OLLAMA_BASE_URL: "http://192.168.4.73:11434"
+  OLLAMA_MODEL: "llama3.1"
+  EMBED_MODEL: "nomic-embed-text"
+  CHROMA_DIR: "/chroma_db"
