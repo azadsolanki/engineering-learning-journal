@@ -17,6 +17,10 @@ spec:
       # Pin to fedora node so hostPath chroma_db and Ollama are reachable
       nodeSelector:
         kubernetes.io/hostname: fedora
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
       containers:
         - name: agent
           image: langchain-poc-agent:latest
