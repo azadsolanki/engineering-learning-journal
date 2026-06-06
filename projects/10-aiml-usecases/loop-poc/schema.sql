@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS tweets (
+    id BIGINT PRIMARY KEY,
+    author_id BIGINT NOT NULL,
+    username VARCHAR(50),
+    text TEXT NOT NULL,
+    lang CHAR(10),
+    is_retweet BOOLEAN DEFAULT FALSE,
+    is_reply BOOLEAN DEFAULT FALSE,
+    is_quote BOOLEAN DEFAULT FALSE,
+    in_reply_to_tweet_id BIGINT,
+    quoted_tweet_id BIGINT,
+    likes INT DEFAULT 0,
+    retweets INT DEFAULT 0,
+    replies INT DEFAULT 0,
+    quotes INT DEFAULT 0,
+    impressions INT DEFAULT 0,
+    tweeted_at TIMESTAMPTZ NOT NULL,
+    fetched_at TIMESTAMPTZ DEFAULT NOW(),
+    raw_json JSONB NOT NULL,
+    loop_analysis TEXT,
+    loop_iterations INT DEFAULT 0,
+    loop_confidence FLOAT DEFAULT 0.0
+);
