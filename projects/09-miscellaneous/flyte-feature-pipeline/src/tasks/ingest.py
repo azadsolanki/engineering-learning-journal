@@ -1,0 +1,26 @@
+"""Task 1: Load and validate raw orders CSV into a typed DataFrame."""
+import pandas as pd
+from flytekit import task, FlyteFile
+
+
+REQUIRED_COLUMNS = {
+    "order_id", "customer_id", "category",
+    "order_amount", "order_date", "returned", "discount_pct",
+}
+
+
+@task(cache=False)
+def ingest_raw_data(csv_path: FlyteFile) -> pd.DataFrame:
+    """Loads raw CSV and performs schema validation."""
+    csv_path.download()
+    df = pd.read_csv(csv_path.path, parse_dates=["order_date"])
+
+    missing = REQUIRED_COLUMNS - set(df.columns)
+    if missing:
+        raise ValueError(f"Missing required columns: {missing}")
+
+    df = df.dropna(subset=["customer_id", "order_amount", "order_date"])
+    df["order_amount"] = df["order_amount"].clip(lower=0)
+
+    print(f"[ingest] Loaded {len(df)} rows, {df['customer_id'].nunique()} unique customers")
+    return df
