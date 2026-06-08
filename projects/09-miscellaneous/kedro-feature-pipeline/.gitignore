@@ -1,0 +1,5 @@
+.venv/
+data/02_intermediate/
+data/03_output/
+__pycache__/
+*.pyc

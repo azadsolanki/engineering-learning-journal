@@ -1,0 +1,35 @@
+# Kedro DataCatalog — maps dataset names used in pipeline.py to actual storage.
+#
+# This is Kedro's key abstraction: nodes are completely decoupled from file paths.
+# Swap a CSVDataset for a SQLTableDataset or a SparkDataset by changing this file —
+# no node code changes required.
+#
+# Caching: if a ParquetDataset file already exists on disk, Kedro loads it
+# instead of re-running the node that produces it (when using --load-versions
+# or the MemoryDataset fallback in runner). Delete the file to recompute.
+
+orders_csv:
+  type: pandas.CSVDataset
+  filepath: data/01_raw/orders.csv
+  load_args:
+    parse_dates: ["order_date"]
+
+raw_orders:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/raw_orders.parquet
+
+agg_features:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/agg_features.parquet
+
+temporal_features:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/temporal_features.parquet
+
+category_features:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/category_features.parquet
+
+customer_feature_store:
+  type: pandas.ParquetDataset
+  filepath: data/03_output/customer_feature_store.parquet
