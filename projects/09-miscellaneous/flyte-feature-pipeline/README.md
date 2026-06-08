@@ -105,6 +105,23 @@ pyflyte run --remote src/workflow.py feature_pipeline --csv_path data/orders.csv
 # Second run: feature tasks show status=CACHED in the Flyte UI
 ```
 
+## Flyte vs Airflow
+
+| | Flyte | Airflow |
+|---|---|---|
+| **Unit of work** | `@task` — typed Python function | `Operator` — class with execute() |
+| **Data passing** | Native typed I/O between tasks | XComs (size-limited, weakly typed) |
+| **Caching** | Built-in per-task, keyed on input hash | Not built-in — DIY with sensors/skips |
+| **Parallelism** | Tasks in a workflow run concurrently by default | Requires explicit fan-out with Dynamic DAGs |
+| **Versioning** | Tasks and workflows are versioned artifacts | DAGs are mutable files |
+| **ML/data focus** | First-class: FlyteFile, FlyteDirectory, map tasks | General-purpose — ML support via plugins |
+| **Local dev** | `pyflyte run` or plain Python | Full Airflow stack (scheduler + webserver) |
+| **Maturity** | Newer, smaller ecosystem | Battle-tested, huge ecosystem |
+
+**When to pick Flyte:** ML/feature pipelines, strong typing matters, you want built-in caching and artifact tracking.
+
+**When to pick Airflow:** General ETL/ELT, team already uses it, integrations with many external systems are needed.
+
 ## Extending this POC
 
 - Add a `LaunchPlan` with a cron schedule to refresh features daily
