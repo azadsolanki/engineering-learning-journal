@@ -1,6 +1,6 @@
 # Python Orchestration Tools — Comparison
 
-Covers **Flyte**, **Prefect**, **Dagster**, **Luigi**, **Metaflow**, and **Kedro** using the same feature engineering pipeline across all six.  
+Covers **Flyte**, **Prefect**, **Dagster**, **Luigi**, **Metaflow**, **Kedro**, **Airflow**, **Hamilton**, and **ZenML** using the same feature engineering pipeline across all nine.  
 Each tool ingests the same e-commerce dataset and produces the same 21-feature Parquet artifact.
 
 POCs:
@@ -10,6 +10,9 @@ POCs:
 - [luigi-feature-pipeline](./luigi-feature-pipeline/)
 - [metaflow-feature-pipeline](./metaflow-feature-pipeline/)
 - [kedro-feature-pipeline](./kedro-feature-pipeline/)
+- [airflow-feature-pipeline](./airflow-feature-pipeline/)
+- [hamilton-feature-pipeline](./hamilton-feature-pipeline/)
+- [zenml-feature-pipeline](./zenml-feature-pipeline/)
 
 ---
 
@@ -23,37 +26,40 @@ POCs:
 | Data asset lineage, observability, freshness-based scheduling | **Dagster** |
 | ML experiments, failure-tolerant pipelines, fan-out parallelism | **Metaflow** |
 | Reusable nodes, YAML-driven data catalog, team ML standardisation | **Kedro** |
+| Industry-standard scheduling, massive operator ecosystem | **Airflow** |
+| DAG inferred from function signatures, zero framework coupling | **Hamilton** |
+| Flyte-style caching locally, pluggable infra stack | **ZenML** |
 
 ---
 
 ## Full comparison
 
-| Dimension | Luigi | Prefect | Flyte | Dagster | Metaflow | Kedro |
-|---|---|---|---|---|---|---|
-| **Core abstraction** | `Task` class | `@task` function | `@task` function | `@asset` | `@step` method | Pure function + DataCatalog |
-| **Pipeline definition** | `requires()` + `output()` + `run()` | `@flow` + `.submit()` | `@workflow` DAG | Asset graph + `Definitions` | `FlowSpec` class | `pipeline([node(...)])` |
-| **Mental model** | Steps that produce files | Functions in a flow | Typed computational graph | Assets that get materialised | Steps on a class | Nodes wired by dataset names |
-| **Caching mechanism** | Output file exists → skip | Input hash + TTL | Input hash + `cache_version` | Lineage + freshness policy | Step checkpoint (failure resume) | Output file exists → skip |
-| **Caching works locally?** | Yes — filesystem | Yes — `~/.prefect/storage/` | No — needs datacatalog | Ephemeral in `materialize()` | Yes — `.metaflow/` artifacts | Yes — catalog file paths |
-| **Cache invalidation** | Delete the output file | TTL expires or inputs change | Bump `cache_version` | Upstream rematerialised | Start a new run | Delete the output file |
-| **Parallelism** | `--workers N` flag | `.submit()` + task runner | Implicit — auto-parallel | Implicit — asset graph | `self.next(a, b, c)` fan-out | `ParallelRunner` |
-| **Data passing** | Files via `LocalTarget` | Return values | Return values (typed) | Return values + IO managers | `self.*` (auto-serialised) | Named datasets via catalog |
-| **Typed I/O** | No — files only | Python types (unenforced) | Strong — `FlyteFile` etc. | Python types + IO managers | Python types (unenforced) | Python types (unenforced) |
-| **Local dev** | `local_scheduler=True` | `python flow.py` | `pyflyte run` | `materialize()` | `python flow.py run` | `kedro run` / `python run.py` |
-| **Server needed locally?** | No | No | No (caching needs cluster) | No | No | No |
-| **UI** | Minimal (luigid) | Prefect UI (lightweight) | Flyte UI (full) | Dagster UI (rich) | None built-in | `kedro viz` (pipeline graph) |
-| **Observability** | Task status only | Flow + task run history | Task runs, artifacts | Asset lineage, metadata, versions | Run history + artifact access | Node run history |
-| **Config approach** | Code-driven parameters | Code-driven | Code-driven | Code-driven | `Parameter` CLI args | YAML (`catalog.yml`, `params.yml`) |
-| **Ecosystem** | Small, stable | Growing | ML-focused | Data-engineering focused | Netflix ML ecosystem | ML + data engineering plugins |
-| **Learning curve** | Very low | Low | Steeper | Medium | Low-medium | Medium |
-| **Age / maturity** | 2012 — very mature | 2018 — modern | 2019 — modern | 2019 — modern | 2018 — mature | 2019 — modern |
-| **Origin** | Spotify | Community | Lyft / Union.ai | Elementl | Netflix | QuantumBlack / McKinsey |
+| Dimension | Luigi | Prefect | Flyte | Dagster | Metaflow | Kedro | Airflow | Hamilton | ZenML |
+|---|---|---|---|---|---|---|---|---|---|
+| **Core abstraction** | `Task` class | `@task` function | `@task` function | `@asset` | `@step` method | Pure function + DataCatalog | `@task` (TaskFlow) | Function name = output | `@step` function |
+| **Pipeline definition** | `requires()` + `output()` + `run()` | `@flow` + `.submit()` | `@workflow` DAG | Asset graph | `FlowSpec` class | `pipeline([node(...)])` | `@dag` | `Driver.execute()` | `@pipeline` |
+| **Mental model** | Steps produce files | Functions in a flow | Typed computational graph | Assets that materialise | Steps on a class | Nodes wired by name | Scheduled task graph | Functions are a DAG | Steps on a stack |
+| **Caching mechanism** | File exists → skip | Input hash + TTL | Input hash + `cache_version` | Lineage + freshness | Step checkpoint (failure resume) | File exists → skip | None built-in | Result store (opt-in) | Input hash (local) |
+| **Caching works locally?** | Yes — filesystem | Yes — `~/.prefect/storage/` | No — needs cluster | Ephemeral | Yes — `.metaflow/` | Yes — catalog files | No | Yes — cache dir | Yes — `~/.zenml/` |
+| **Cache invalidation** | Delete output file | TTL expires or inputs change | Bump `cache_version` | Upstream rematerialised | Start a new run | Delete output file | Manual skip logic | Delete cache dir | Inputs change |
+| **Parallelism** | `--workers N` flag | `.submit()` + task runner | Implicit — auto-parallel | Implicit — asset graph | `self.next(a, b, c)` fan-out | `ParallelRunner` | Implicit from wiring | Implicit from graph | Sequential (local) |
+| **Data passing** | Files via `LocalTarget` | Return values | Typed return values | Return values + IO managers | `self.*` (auto-serialised) | Named datasets (catalog) | XCom (DB, size-limited) | Return values | Return values |
+| **Typed I/O** | No — files only | Python types (unenforced) | Strong — `FlyteFile` etc. | Python types + IO managers | Python types (unenforced) | Python types (unenforced) | No — XCom is untyped | Python types (unenforced) | Python types (unenforced) |
+| **Local dev** | `local_scheduler=True` | `python flow.py` | `pyflyte run` | `materialize()` | `python flow.py run` | `kedro run` | Full stack required | `python run.py` | `python pipeline.py` |
+| **Server needed locally?** | No | No | No (caching needs cluster) | No | No | No | Yes | No | No |
+| **UI** | Minimal (luigid) | Prefect UI (lightweight) | Flyte UI (full) | Dagster UI (rich) | None built-in | `kedro viz` | Full Airflow UI | None built-in | ZenML Dashboard |
+| **Observability** | Task status only | Flow + task run history | Task runs, artifacts | Asset lineage, metadata, versions | Run history + artifact access | Node run history | Task run history | DAG visualisation | Step runs, artifact store |
+| **Config approach** | Code-driven | Code-driven | Code-driven | Code-driven | `Parameter` CLI args | YAML (`catalog.yml`) | Code-driven | `inputs={}` dict | Code-driven |
+| **Ecosystem** | Small, stable | Growing | ML-focused | Data-focused | Netflix ML | ML + data plugins | Massive operator library | Micro-framework | ML stack integrations |
+| **Learning curve** | Very low | Low | Steeper | Medium | Low-medium | Medium | Medium | Low | Low-medium |
+| **Age / maturity** | 2012 — very mature | 2018 | 2019 | 2019 | 2018 | 2019 | 2015 — most mature | 2022 | 2021 |
+| **Origin** | Spotify | Community | Lyft / Union.ai | Elementl | Netflix | QuantumBlack | Airbnb | DAGWorks | Community |
 
 ---
 
 ## Caching: how each tool decides to skip a task
 
-The most important conceptual difference across the six tools.
+The most important conceptual difference across all nine tools.
 
 ### Luigi & Kedro — file existence
 ```python
@@ -116,7 +122,43 @@ def agg_features(self):
 
 ---
 
-## Code style: same computation in all six tools
+### Airflow — no built-in caching
+```python
+@task()
+def compute_agg_features(raw_path: str) -> str:
+    # Must implement manually — check if output exists, skip if so
+    if Path("output/agg.parquet").exists():
+        return "output/agg.parquet"
+    # ... compute ...
+```
+**Rule:** none. Airflow has no native task caching — every run re-executes every task.  
+**Workarounds:** `ShortCircuitOperator`, skip logic inside the task, or external state checks.
+
+---
+
+### Hamilton — result store (opt-in)
+```python
+from hamilton.plugins import h_cache
+
+dr = driver.Builder().with_modules(features).with_cache(h_cache.SmartCacheAdapter("cache/")).build()
+# Second execute() with same inputs → loads from cache/
+```
+**Rule:** configurable — off by default. Add `with_cache()` to the Driver builder to enable.  
+**Note:** without a cache adapter the graph always recomputes.
+
+---
+
+### ZenML — input hash (local, like Prefect)
+```python
+@step(enable_cache=True)
+def compute_aggregation_features(df: pd.DataFrame) -> pd.DataFrame: ...
+```
+**Rule:** same as Prefect — hash inputs, return cached artifact if match. Works locally out of the box via `~/.zenml/`.  
+**Advantage over Flyte:** no cluster needed for local caching.
+
+---
+
+## Code style: same computation in all nine tools
 
 Per-customer aggregation feature — the pattern each tool uses:
 
@@ -168,10 +210,36 @@ def compute_aggregation_features(raw_orders: pd.DataFrame) -> pd.DataFrame:
     return raw_orders.groupby("customer_id").agg(...).reset_index()
 ```
 
-Kedro nodes are the most portable — zero framework coupling.  
+Kedro and Hamilton nodes are the most portable — zero framework imports.  
 Metaflow is unique in being class-method based with `self` for state.  
-Prefect and Flyte look almost identical — the difference is the runtime.  
-Dagster adds observability metadata as a first-class concern.
+Prefect, Flyte, and ZenML look nearly identical — the difference is the runtime and caching backend.  
+Dagster adds observability metadata as a first-class concern.  
+Airflow requires passing file paths via XCom rather than DataFrames.
+
+**Airflow**
+```python
+@task()
+def compute_agg_features(raw_path: str) -> str:   # path via XCom, not DataFrame
+    df = pd.read_parquet(raw_path)
+    result = df.groupby("customer_id").agg(...).reset_index()
+    path = "/tmp/agg.parquet"
+    result.to_parquet(path)
+    return path
+```
+
+**Hamilton**
+```python
+# Pure function — zero framework imports, same as Kedro
+def aggregation_features(raw_orders: pd.DataFrame) -> pd.DataFrame:
+    return raw_orders.groupby("customer_id").agg(...).reset_index()
+```
+
+**ZenML**
+```python
+@step(enable_cache=True)
+def compute_aggregation_features(df: pd.DataFrame) -> pd.DataFrame:
+    return df.groupby("customer_id").agg(...).reset_index()
+```
 
 ---
 
@@ -185,18 +253,21 @@ Dagster adds observability metadata as a first-class concern.
 | **Dagster** | Your pipelines are compute-jobs (not asset-producing), or you want simplicity |
 | **Metaflow** | You need cross-run idempotency (not just failure resume), or a UI |
 | **Kedro** | You want minimal config files, or your pipeline is a one-off script |
+| **Airflow** | You want simple local dev, built-in caching, or small team with no ops budget |
+| **Hamilton** | You need scheduling, a UI, or distributed execution out of the box |
+| **ZenML** | You need a large operator ecosystem or your team is already on Airflow/Prefect |
 
 ---
 
-## Airflow vs all six
+## Airflow vs the other eight
 
-| | Airflow | The six tools |
+| | Airflow | The other eight tools |
 |---|---|---|
-| **Caching** | Not built-in | Built-in — each model differs (see above) |
-| **Data passing** | XComs (size-limited, weakly typed) | Native — in-memory, files, or typed artifacts |
-| **Local dev** | Full stack (scheduler + webserver + DB) | Python script or lightweight runner |
+| **Caching** | None built-in | Built-in — each model differs (see above) |
+| **Data passing** | XComs (DB, size-limited, untyped) | Native — in-memory or typed artifacts |
+| **Local dev** | Full stack (scheduler + webserver + DB) | `python script.py` or lightweight runner |
 | **Paradigm** | Task-centric, DAG-as-code | Varies — function, asset, step, node |
 | **Operator ecosystem** | Massive (S3, GCS, Snowflake, dbt, …) | Smaller — more DIY |
 
-Airflow dominates on breadth of integrations and team familiarity.  
-These tools win on developer experience, built-in caching, and data awareness.
+Airflow dominates on ecosystem breadth and team familiarity.  
+Every other tool in this series beats it on local dev experience and built-in caching.
