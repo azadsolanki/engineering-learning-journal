@@ -4,6 +4,11 @@ Phase 1 - Step 2: RAG chatbot over fedora-engineering-workstation docs.
 Retrieves relevant chunks from ChromaDB and answers questions using Ollama.
 All LangChain calls are traced locally in Phoenix at http://localhost:6006
 
+Features:
+- Query rewriting for better retrieval
+- Conversation memory: last 5 turns kept in context
+- MMR retrieval for diversity
+
 Usage:
     python rag.py
     python rag.py --question "how do I set up a kubeadm cluster?"
@@ -23,7 +28,6 @@ from langchain_ollama import OllamaEmbeddings, ChatOllama
 from langchain_chroma import Chroma
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough
 
 load_dotenv()
 
@@ -31,15 +35,20 @@ OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.1")
 EMBED_MODEL = os.getenv("OLLAMA_EMBED_MODEL", "nomic-embed-text")
 CHROMA_DIR = "./chroma_db"
+HISTORY_WINDOW = 5
 
-REWRITE_TEMPLATE = """Convert the question to a short keyword search query (max 8 words, no explanation, no punctuation).
+REWRITE_TEMPLATE = """Given the conversation history (if any), convert the current question to a self-contained keyword search query (max 10 words, no explanation, no punctuation).
 
-Question: {question}
+{history}
+
+Current question: {question}
 Keywords:"""
 
 PROMPT_TEMPLATE = """You are a helpful assistant for Fedora Linux engineering workstation setup.
 Answer the question using only the provided context.
 If the answer is not in the context, say "I don't have that information in the docs."
+
+{history}
 
 Context:
 {context}
@@ -58,24 +67,38 @@ def load_retriever():
     )
 
 
+def format_history(history: list[tuple[str, str]]) -> str:
+    if not history:
+        return ""
+    lines = [f"User: {q}\nAssistant: {a}" for q, a in history]
+    return "Conversation history:\n" + "\n\n".join(lines)
+
+
 def build_chain(retriever):
     llm = ChatOllama(model=OLLAMA_MODEL, base_url=OLLAMA_BASE_URL)
     rewrite_prompt = ChatPromptTemplate.from_template(REWRITE_TEMPLATE)
     answer_prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
 
     def format_docs(docs):
-        return "\n\n".join(f"[{doc.metadata.get('source', 'unknown').split('/')[-1]}]\n{doc.page_content}" for doc in docs)
+        return "\n\n".join(
+            f"[{doc.metadata.get('source', 'unknown').split('/')[-1]}]\n{doc.page_content}"
+            for doc in docs
+        )
 
-    # Step 1: rewrite question into better search keywords
     rewrite_chain = rewrite_prompt | llm | StrOutputParser()
 
-    # Step 2: retrieve using rewritten query, then answer using original question
     def retrieve_with_rewrite(inputs):
-        rewritten = rewrite_chain.invoke({"question": inputs["question"]})
-        # Take only the first line to avoid verbose LLM output
+        rewritten = rewrite_chain.invoke({
+            "question": inputs["question"],
+            "history": inputs.get("history", ""),
+        })
         search_query = rewritten.strip().splitlines()[0].strip()
         docs = retriever.invoke(search_query)
-        return {"context": format_docs(docs), "question": inputs["question"]}
+        return {
+            "context": format_docs(docs),
+            "question": inputs["question"],
+            "history": inputs.get("history", ""),
+        }
 
     chain = retrieve_with_rewrite | answer_prompt | llm | StrOutputParser()
     return chain
@@ -83,14 +106,23 @@ def build_chain(retriever):
 
 def chat(chain):
     print("Fedora Docs RAG Chatbot (type 'exit' to quit)\n")
+    history: list[tuple[str, str]] = []
+
     while True:
         question = input("You: ").strip()
         if question.lower() in ("exit", "quit"):
             break
         if not question:
             continue
-        answer = chain.invoke({"question": question})
+
+        answer = chain.invoke({
+            "question": question,
+            "history": format_history(history),
+        })
         print(f"\nAssistant: {answer}\n")
+
+        history.append((question, answer))
+        history = history[-HISTORY_WINDOW:]
 
 
 if __name__ == "__main__":
@@ -106,7 +138,7 @@ if __name__ == "__main__":
     chain = build_chain(retriever)
 
     if args.question:
-        answer = chain.invoke({"question": args.question})
+        answer = chain.invoke({"question": args.question, "history": ""})
         print(f"\nAnswer: {answer}\n")
     else:
         chat(chain)
