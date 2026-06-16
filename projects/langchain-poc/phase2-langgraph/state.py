@@ -31,3 +31,6 @@ class AgentState(TypedDict):
 
     # Whether the agent needs more info (drives conditional edges)
     needs_more_info: bool
+
+    # Optional human feedback injected after diagnosis review (HITL)
+    human_feedback: str

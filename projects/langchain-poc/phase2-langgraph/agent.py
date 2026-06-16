@@ -5,12 +5,14 @@ A stateful multi-step agent that:
 1. Diagnoses the problem type
 2. Fetches kubectl info using tools
 3. Searches docs for relevant guidance
-4. Suggests a fix
-5. Loops back for more info if needed (max 3 iterations)
+4. Pauses for human review (HITL) before suggesting a fix
+5. Suggests a fix incorporating human feedback
+6. Loops back for more info if needed (max 3 iterations)
 
 Usage:
     python agent.py
     python agent.py --problem "pod is in CrashLoopBackOff"
+    python agent.py --no-hitl          # skip human review step
 """
 
 import sys
@@ -25,6 +27,7 @@ from langchain_ollama import ChatOllama
 from langchain_core.messages import SystemMessage, HumanMessage
 from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
+from langgraph.checkpoint.memory import MemorySaver
 
 from state import AgentState
 from tools import TOOLS
@@ -104,8 +107,11 @@ Provide:
 # ── Node: suggest_fix ─────────────────────────────────────────────────────────
 
 def suggest_fix(state: AgentState) -> AgentState:
-    """Generate concrete fix commands based on the diagnosis."""
+    """Generate concrete fix commands based on the diagnosis and optional human feedback."""
     llm = get_llm()
+
+    feedback = state.get("human_feedback", "").strip()
+    feedback_section = f"\n\nHuman reviewer added context:\n{feedback}" if feedback else ""
 
     messages = [
         SystemMessage(content="""You are a Kubernetes expert.
@@ -117,7 +123,7 @@ Be specific and actionable."""),
         HumanMessage(content=f"""Problem: {state['problem']}
 
 Diagnosis:
-{state.get('diagnosis', 'Unknown')}
+{state.get('diagnosis', 'Unknown')}{feedback_section}
 
 Relevant docs:
 {state.get('docs_context', '')}
@@ -189,7 +195,7 @@ def should_loop(state: AgentState) -> str:
 
 # ── Build the graph ───────────────────────────────────────────────────────────
 
-def build_graph():
+def build_graph(hitl: bool = True):
     graph = StateGraph(AgentState)
 
     graph.add_node("diagnose", diagnose)
@@ -214,6 +220,11 @@ def build_graph():
     graph.add_edge("suggest_fix", "report")
     graph.add_edge("report", END)
 
+    if hitl:
+        # Pause before suggest_fix so a human can review the diagnosis
+        checkpointer = MemorySaver()
+        return graph.compile(checkpointer=checkpointer, interrupt_before=["suggest_fix"])
+
     return graph.compile()
 
 
@@ -223,12 +234,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--problem", default="A pod is stuck in CrashLoopBackOff status")
     parser.add_argument("--no-tracing", action="store_true")
+    parser.add_argument("--no-hitl", action="store_true", help="Skip human review step")
     args = parser.parse_args()
 
     if not args.no_tracing:
         setup_tracing(project_name="langchain-poc-phase2")
 
-    app = build_graph()
+    hitl = not args.no_hitl
+    app = build_graph(hitl=hitl)
 
     initial_state: AgentState = {
         "problem": args.problem,
@@ -239,7 +252,36 @@ if __name__ == "__main__":
         "suggested_fix": "",
         "iterations": 0,
         "needs_more_info": False,
+        "human_feedback": "",
     }
 
     print(f"\nTroubleshooting: {args.problem}\n")
-    app.invoke(initial_state)
+
+    if hitl:
+        config = {"configurable": {"thread_id": "1"}}
+
+        # First run — graph stops before suggest_fix
+        app.invoke(initial_state, config=config)
+
+        # Show the diagnosis for human review
+        state_snapshot = app.get_state(config)
+        diagnosis = state_snapshot.values.get("diagnosis", "No diagnosis produced.")
+
+        print("\n" + "=" * 60)
+        print("DIAGNOSIS (human review)")
+        print("=" * 60)
+        print(diagnosis)
+        print("=" * 60)
+        print("\nPress Enter to approve, or type additional context to guide the fix:")
+        feedback = input("> ").strip()
+
+        if feedback:
+            app.update_state(config, {"human_feedback": feedback})
+            print(f"\nFeedback recorded. Resuming with your context...\n")
+        else:
+            print("\nApproved. Generating fix...\n")
+
+        # Resume — runs suggest_fix and report
+        app.invoke(None, config=config)
+    else:
+        app.invoke(initial_state)
