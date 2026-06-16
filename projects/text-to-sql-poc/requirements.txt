@@ -1,0 +1,19 @@
+# LangChain + SQLCoder
+langchain
+langchain-ollama
+langchain-community
+langchain-core
+
+# Database
+duckdb
+pandas
+
+# Tracing
+arize-phoenix
+opentelemetry-sdk
+opentelemetry-exporter-otlp
+openinference-instrumentation-langchain
+
+# Utilities
+python-dotenv
+tabulate
