@@ -137,3 +137,37 @@ SEMANTIC_CONTEXT = """
 -- seasonal_period   : 'Holiday Season' (Nov-Dec), 'Summer' (Jun-Aug), 'Spring' (Mar-May)
 -- performance_tier  : 'Star' (>=$50k), 'High Performer' (>=$20k), 'Good Performer' (>=$5k)
 """
+
+
+def build_model_schema() -> str:
+    """
+    Produce the schema string passed to SQLCoder inside the ### Database Schema section.
+
+    SQLCoder was trained on exactly 3 sections (Task / Database Schema / Answer).
+    Any extra section causes it to generate nothing.  We embed semantic hints as
+    plain SQL comments at the bottom of the schema block — the model handles them fine.
+    """
+    import re
+
+    def strip_description_comments(ddl: str) -> str:
+        lines = [re.sub(r"--.*$", "", line).rstrip() for line in ddl.splitlines()]
+        return "\n".join(line for line in lines if line.strip())
+
+    # NOTE: do NOT use semicolons in hints — SQLCoder treats them as statement terminators
+    # and generates nothing after them. Use commas to separate clauses instead.
+    hints = (
+        "-- Key join: fct_orders.user_id = dim_users.user_id\n"
+        "-- Key metrics: revenue=SUM(order_total), net_revenue=SUM(net_order_total), "
+        "gross_profit=SUM(total_gross_profit), aov=AVG(order_total)\n"
+        "-- Use fct_daily_revenue for time-series and trend queries, "
+        "use fct_orders for order-level or customer-level queries\n"
+        "-- dim_products already has pre-computed total_revenue, total_gross_profit, "
+        "return_rate, margin_percentage per product (no join needed)\n"
+        "-- value_segment: 'VIP' (LTV>=1000), 'Loyal' (5+ orders), 'Regular' (2+), 'New' (1)\n"
+        "-- activity_segment: 'Active' (<=90 days), 'At Risk' (<=180), 'Dormant' (<=365), 'Churned'\n"
+        "-- order_size_category: 'Large' (>=200), 'Medium' (>=100), 'Small' (>=50), 'Micro'\n"
+        "-- category_group: 'Apparel', 'Footwear', 'Accessories'\n"
+        "-- price_category: 'Luxury', 'Premium', 'Mid-Range', 'Budget'\n"
+        "-- performance_tier: 'Star', 'High Performer', 'Good Performer', 'Average Performer', 'Slow Mover'"
+    )
+    return strip_description_comments(DDL) + "\n\n" + hints
