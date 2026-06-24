@@ -4,6 +4,9 @@ langchain-ollama
 langchain-community
 langchain-core
 
+# Flyte orchestration
+flytekit
+
 # Database
 duckdb
 pandas

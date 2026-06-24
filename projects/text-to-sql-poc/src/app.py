@@ -22,13 +22,13 @@ from chain import ask, build_chain, SQLCODER_MODEL
 
 EXAMPLE_QUESTIONS = [
     "What is the total revenue and number of orders in 2024?",
-    "Which 5 product categories have the highest total revenue?",
+    "What is the total revenue by product category from dim_products?",
     "How many VIP customers are currently Active?",
-    "Show me the top 5 brands by gross profit margin percentage",
-    "What percentage of orders are from international customers?",
-    "Which brands have the highest average return rate?",
+    "What is the average gross profit margin percentage by brand from dim_products?",
+    "What is the ratio of orders where is_domestic_customer is false?",
+    "What are the top 5 brands ranked by return rate in dim_products?",
     "What is the average order value by customer age group?",
-    "Show revenue by month for 2023",
+    "What is total revenue by month for 2023?",
 ]
 
 
