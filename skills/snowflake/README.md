@@ -15,6 +15,7 @@ Notes on running and administering Snowflake.
 | 07 | [Masking & Row Access Policies](admin/07-masking-and-row-access-policies.md) | Dynamic masking, conditional masking, mapping-table row policies, policy admin role |
 | 08 | [Object Tagging & Classification](admin/08-object-tagging-and-classification.md) | Tags, tag-based masking, SYSTEM$CLASSIFY, cost attribution by tag |
 | 09 | [Replication & Failover](admin/09-replication-and-failover.md) | Failover groups, client redirect, failover runbook, replication monitoring |
+| 10 | [Snowpipe](admin/10-snowpipe.md) | Storage integrations, auto-ingest pipes, PIPE_STATUS, COPY_HISTORY, troubleshooting |
 
 ## Up Next
 
