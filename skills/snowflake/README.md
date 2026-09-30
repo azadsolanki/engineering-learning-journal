@@ -14,6 +14,7 @@ Notes on running and administering Snowflake.
 | 06 | [Zero-Copy Cloning](admin/06-zero-copy-cloning.md) | Cloning tables/schemas/dbs, dev envs, blue/green swaps, what doesn't get cloned |
 | 07 | [Masking & Row Access Policies](admin/07-masking-and-row-access-policies.md) | Dynamic masking, conditional masking, mapping-table row policies, policy admin role |
 | 08 | [Object Tagging & Classification](admin/08-object-tagging-and-classification.md) | Tags, tag-based masking, SYSTEM$CLASSIFY, cost attribution by tag |
+| 09 | [Replication & Failover](admin/09-replication-and-failover.md) | Failover groups, client redirect, failover runbook, replication monitoring |
 
 ## Up Next
 
