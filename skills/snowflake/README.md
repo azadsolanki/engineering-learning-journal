@@ -11,6 +11,7 @@ Notes on running and administering Snowflake.
 | 03 | [Users, Auth & Network Security](admin/03-users-auth-network-security.md) | Person vs service users, key-pair auth, MFA, network policies |
 | 04 | [Monitoring with ACCOUNT_USAGE](admin/04-monitoring-account-usage.md) | Spend, expensive and slow queries, storage, access audits, alerts |
 | 05 | [Time Travel & Fail-safe](admin/05-time-travel-and-failsafe.md) | Retention settings, AT/BEFORE queries, UNDROP, restore-and-swap, Fail-safe costs |
+| 06 | [Zero-Copy Cloning](admin/06-zero-copy-cloning.md) | Cloning tables/schemas/dbs, dev envs, blue/green swaps, what doesn't get cloned |
 
 ## Up Next
 
