@@ -13,6 +13,7 @@ Notes on running and administering Snowflake.
 | 05 | [Time Travel & Fail-safe](admin/05-time-travel-and-failsafe.md) | Retention settings, AT/BEFORE queries, UNDROP, restore-and-swap, Fail-safe costs |
 | 06 | [Zero-Copy Cloning](admin/06-zero-copy-cloning.md) | Cloning tables/schemas/dbs, dev envs, blue/green swaps, what doesn't get cloned |
 | 07 | [Masking & Row Access Policies](admin/07-masking-and-row-access-policies.md) | Dynamic masking, conditional masking, mapping-table row policies, policy admin role |
+| 08 | [Object Tagging & Classification](admin/08-object-tagging-and-classification.md) | Tags, tag-based masking, SYSTEM$CLASSIFY, cost attribution by tag |
 
 ## Up Next
 
