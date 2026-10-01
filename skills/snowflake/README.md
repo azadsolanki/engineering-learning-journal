@@ -18,10 +18,11 @@ Notes on running and administering Snowflake.
 | 10 | [Snowpipe](admin/10-snowpipe.md) | Storage integrations, auto-ingest pipes, PIPE_STATUS, COPY_HISTORY, troubleshooting |
 | 11 | [Streams & Tasks](admin/11-streams-and-tasks.md) | CDC streams, staleness, serverless vs warehouse tasks, task graphs, monitoring |
 | 12 | [Secure Data Sharing](admin/12-secure-data-sharing.md) | Shares, secure views, consumer setup, reader accounts, listings |
+| 13 | [Clustering & Performance](admin/13-clustering-and-performance.md) | Clustering keys, search optimization, query acceleration, caching, serverless costs |
 
 ## Up Next
 
-- [ ] Data protection: Time Travel, Fail-safe, zero-copy cloning
-- [ ] Data governance: masking and row access policies, tags
-- [ ] Replication and failover
-- [ ] Snowpipe and tasks
+- [ ] Cost governance: budgets and cost anomaly detection
+- [ ] Dynamic tables vs streams + tasks
+- [ ] Iceberg tables and external volumes
+- [ ] Organization-level admin (ORGADMIN, org usage views)
