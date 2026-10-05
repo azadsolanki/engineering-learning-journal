@@ -27,10 +27,11 @@ Notes on running and administering Snowflake.
 | 19 | [Encryption & Private Connectivity](admin/19-encryption-and-private-connectivity.md) | Key hierarchy, rekeying, Tri-Secret Secure, PrivateLink, private-only network policy |
 | 20 | [Security Policies & Trust Center](admin/20-security-policies-and-trust-center.md) | Password and session policies, Trust Center scanners, detection queries |
 | 21 | [Parameters](admin/21-parameters.md) | Parameter types and inheritance, day-one settings, QUERY_TAG cost attribution |
+| 22 | [Infrastructure as Code](admin/22-infrastructure-as-code.md) | Terraform provider, roles and grants as code, schemachange, guardrails |
 
 ## Up Next
 
-- [ ] Cost governance: budgets and cost anomaly detection
-- [ ] Dynamic tables vs streams + tasks
-- [ ] Iceberg tables and external volumes
-- [ ] Organization-level admin (ORGADMIN, org usage views)
+- [ ] Snowpark and container services admin
+- [ ] Cortex AI features: access control and cost
+- [ ] Data quality monitoring (data metric functions)
+- [ ] Disaster recovery runbook drill write-up
