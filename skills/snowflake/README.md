@@ -21,6 +21,7 @@ Notes on running and administering Snowflake.
 | 13 | [Clustering & Performance](admin/13-clustering-and-performance.md) | Clustering keys, search optimization, query acceleration, caching, serverless costs |
 | 14 | [Budgets & Cost Anomalies](admin/14-budgets-and-cost-anomalies.md) | Account and custom budgets, budgets vs resource monitors, anomaly detection, spend in currency |
 | 15 | [Dynamic Tables](admin/15-dynamic-tables.md) | Target lag, DOWNSTREAM chaining, incremental vs full refresh, refresh history |
+| 16 | [Iceberg Tables](admin/16-iceberg-tables.md) | External volumes, Snowflake-managed vs Glue catalog, refresh, admin gotchas |
 
 ## Up Next
 
