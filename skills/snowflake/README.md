@@ -19,6 +19,7 @@ Notes on running and administering Snowflake.
 | 11 | [Streams & Tasks](admin/11-streams-and-tasks.md) | CDC streams, staleness, serverless vs warehouse tasks, task graphs, monitoring |
 | 12 | [Secure Data Sharing](admin/12-secure-data-sharing.md) | Shares, secure views, consumer setup, reader accounts, listings |
 | 13 | [Clustering & Performance](admin/13-clustering-and-performance.md) | Clustering keys, search optimization, query acceleration, caching, serverless costs |
+| 14 | [Budgets & Cost Anomalies](admin/14-budgets-and-cost-anomalies.md) | Account and custom budgets, budgets vs resource monitors, anomaly detection, spend in currency |
 
 ## Up Next
 
