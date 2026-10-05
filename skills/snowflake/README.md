@@ -25,6 +25,7 @@ Notes on running and administering Snowflake.
 | 17 | [Organization Admin](admin/17-organization-admin.md) | ORGADMIN, creating/renaming/dropping accounts, ORGANIZATION_USAGE, account strategy |
 | 18 | [External Access & Secrets](admin/18-external-access-and-secrets.md) | Egress network rules, secrets, external access integrations, integration types |
 | 19 | [Encryption & Private Connectivity](admin/19-encryption-and-private-connectivity.md) | Key hierarchy, rekeying, Tri-Secret Secure, PrivateLink, private-only network policy |
+| 20 | [Security Policies & Trust Center](admin/20-security-policies-and-trust-center.md) | Password and session policies, Trust Center scanners, detection queries |
 
 ## Up Next
 
