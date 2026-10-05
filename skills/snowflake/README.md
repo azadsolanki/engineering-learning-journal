@@ -23,6 +23,7 @@ Notes on running and administering Snowflake.
 | 15 | [Dynamic Tables](admin/15-dynamic-tables.md) | Target lag, DOWNSTREAM chaining, incremental vs full refresh, refresh history |
 | 16 | [Iceberg Tables](admin/16-iceberg-tables.md) | External volumes, Snowflake-managed vs Glue catalog, refresh, admin gotchas |
 | 17 | [Organization Admin](admin/17-organization-admin.md) | ORGADMIN, creating/renaming/dropping accounts, ORGANIZATION_USAGE, account strategy |
+| 18 | [External Access & Secrets](admin/18-external-access-and-secrets.md) | Egress network rules, secrets, external access integrations, integration types |
 
 ## Up Next
 
