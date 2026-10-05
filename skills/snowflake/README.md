@@ -22,6 +22,7 @@ Notes on running and administering Snowflake.
 | 14 | [Budgets & Cost Anomalies](admin/14-budgets-and-cost-anomalies.md) | Account and custom budgets, budgets vs resource monitors, anomaly detection, spend in currency |
 | 15 | [Dynamic Tables](admin/15-dynamic-tables.md) | Target lag, DOWNSTREAM chaining, incremental vs full refresh, refresh history |
 | 16 | [Iceberg Tables](admin/16-iceberg-tables.md) | External volumes, Snowflake-managed vs Glue catalog, refresh, admin gotchas |
+| 17 | [Organization Admin](admin/17-organization-admin.md) | ORGADMIN, creating/renaming/dropping accounts, ORGANIZATION_USAGE, account strategy |
 
 ## Up Next
 
