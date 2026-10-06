@@ -31,6 +31,7 @@ Notes on running and administering Snowflake.
 | 23 | [Snowpark & Container Services](admin/23-snowpark-and-container-services.md) | Packages, Snowpark-optimized warehouses, compute pools, services, SPCS cost |
 | 24 | [Cortex AI Admin](admin/24-cortex-ai-admin.md) | CORTEX_USER role, model allowlist, cross-region inference, token cost monitoring |
 | 25 | [Data Quality Monitoring](admin/25-data-quality-monitoring.md) | System and custom DMFs, schedules, expectations, results |
+| 26 | [Alerts & Notifications](admin/26-alerts-and-notifications.md) | Email/webhook/queue integrations, alerts, alert history |
 
 ## Up Next
 
