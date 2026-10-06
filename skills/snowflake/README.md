@@ -33,6 +33,7 @@ Notes on running and administering Snowflake.
 | 25 | [Data Quality Monitoring](admin/25-data-quality-monitoring.md) | System and custom DMFs, schedules, expectations, results |
 | 26 | [Alerts & Notifications](admin/26-alerts-and-notifications.md) | Email/webhook/queue integrations, alerts, alert history |
 | 27 | [Query Troubleshooting](admin/27-query-troubleshooting.md) | Time breakdown, query profile, exploding joins, spilling, locks, killing queries |
+| 28 | [Owner's vs Caller's Rights](admin/28-procedures-owners-vs-callers-rights.md) | EXECUTE AS modes, delegating admin actions safely, auditing calls |
 
 ## Up Next
 
