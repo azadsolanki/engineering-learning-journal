@@ -29,6 +29,7 @@ Notes on running and administering Snowflake.
 | 21 | [Parameters](admin/21-parameters.md) | Parameter types and inheritance, day-one settings, QUERY_TAG cost attribution |
 | 22 | [Infrastructure as Code](admin/22-infrastructure-as-code.md) | Terraform provider, roles and grants as code, schemachange, guardrails |
 | 23 | [Snowpark & Container Services](admin/23-snowpark-and-container-services.md) | Packages, Snowpark-optimized warehouses, compute pools, services, SPCS cost |
+| 24 | [Cortex AI Admin](admin/24-cortex-ai-admin.md) | CORTEX_USER role, model allowlist, cross-region inference, token cost monitoring |
 
 ## Up Next
 
