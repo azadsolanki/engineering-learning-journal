@@ -36,10 +36,11 @@ Notes on running and administering Snowflake.
 | 28 | [Owner's vs Caller's Rights](admin/28-procedures-owners-vs-callers-rights.md) | EXECUTE AS modes, delegating admin actions safely, auditing calls |
 | 29 | [Event Tables](admin/29-event-tables-logging-tracing.md) | Logs, traces, metrics, LOG_LEVEL/TRACE_LEVEL, querying and retention |
 | 30 | [Housekeeping](admin/30-housekeeping-unused-objects.md) | Unused tables, dormant users, orphan roles, idle warehouses, cleanup routine |
+| 31 | [DR Drill Runbook](admin/31-dr-drill-runbook.md) | Failover drill steps, validation, failback, drill report template |
 
 ## Up Next
 
-- [ ] Snowpark and container services admin
-- [ ] Cortex AI features: access control and cost
-- [ ] Data quality monitoring (data metric functions)
-- [ ] Disaster recovery runbook drill write-up
+- [ ] Snowflake Native Apps (provider and consumer admin)
+- [ ] Hybrid tables and Unistore
+- [ ] Openflow / connectors for ingestion
+- [ ] SnowPro Advanced: Administrator exam prep
