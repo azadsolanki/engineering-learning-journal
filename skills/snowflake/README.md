@@ -34,6 +34,7 @@ Notes on running and administering Snowflake.
 | 26 | [Alerts & Notifications](admin/26-alerts-and-notifications.md) | Email/webhook/queue integrations, alerts, alert history |
 | 27 | [Query Troubleshooting](admin/27-query-troubleshooting.md) | Time breakdown, query profile, exploding joins, spilling, locks, killing queries |
 | 28 | [Owner's vs Caller's Rights](admin/28-procedures-owners-vs-callers-rights.md) | EXECUTE AS modes, delegating admin actions safely, auditing calls |
+| 29 | [Event Tables](admin/29-event-tables-logging-tracing.md) | Logs, traces, metrics, LOG_LEVEL/TRACE_LEVEL, querying and retention |
 
 ## Up Next
 
