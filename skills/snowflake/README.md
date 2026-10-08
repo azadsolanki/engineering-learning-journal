@@ -38,6 +38,14 @@ Notes on running and administering Snowflake.
 | 30 | [Housekeeping](admin/30-housekeeping-unused-objects.md) | Unused tables, dormant users, orphan roles, idle warehouses, cleanup routine |
 | 31 | [DR Drill Runbook](admin/31-dr-drill-runbook.md) | Failover drill steps, validation, failback, drill report template |
 
+## Case Studies
+
+Real problems, worked through end to end: symptoms, troubleshooting, a reproduction you can run, and the fix.
+
+| # | Case | What's covered |
+|:---|:---|:---|
+| 01 | [~300 ms per Statement with the Node.js SDK](case-studies/01-sdk-multi-statement-latency/README.md) | Multi-statement latency, SDK vs SQL API, unsupported SQL API parameters, `DEFAULT_NULL_ORDERING` vs `NULLS FIRST/LAST` |
+
 ## Up Next
 
 - [ ] Snowflake Native Apps (provider and consumer admin)
