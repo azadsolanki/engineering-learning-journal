@@ -38,6 +38,16 @@ Notes on running and administering Snowflake.
 | 30 | [Housekeeping](admin/30-housekeeping-unused-objects.md) | Unused tables, dormant users, orphan roles, idle warehouses, cleanup routine |
 | 31 | [DR Drill Runbook](admin/31-dr-drill-runbook.md) | Failover drill steps, validation, failback, drill report template |
 
+## Hybrid Tables & Unistore
+
+| # | Topic | What's covered |
+|:---|:---|:---|
+| 01 | [Overview](hybrid-tables/01-overview-unistore.md) | Unistore, hybrid vs standard tables, row store + columnar copy, good and poor fits |
+| 02 | [Creating Hybrid Tables](hybrid-tables/02-creating-hybrid-tables.md) | Enforced PK/UNIQUE/FK, secondary indexes, loading rules |
+| 03 | [Limitations & Availability](hybrid-tables/03-limitations-and-availability.md) | Regions, no trial accounts, unsupported features, 2 TB quota, consistency |
+| 04 | [Cost & Monitoring](hybrid-tables/04-cost-and-monitoring.md) | Storage billing, storage views, AGGREGATE_QUERY_HISTORY, warehouse sizing |
+| 05 | [Transactional Patterns Lab](hybrid-tables/05-transactional-patterns-lab.md) | Constraint enforcement, row-level locking, control tables, hybrid ⨝ standard joins |
+
 ## Case Studies
 
 Real problems, worked through end to end: symptoms, troubleshooting, a reproduction you can run, and the fix.
@@ -49,6 +59,5 @@ Real problems, worked through end to end: symptoms, troubleshooting, a reproduct
 ## Up Next
 
 - [ ] Snowflake Native Apps (provider and consumer admin)
-- [ ] Hybrid tables and Unistore
 - [ ] Openflow / connectors for ingestion
 - [ ] SnowPro Advanced: Administrator exam prep
